@@ -20,7 +20,7 @@ case class SetType(ty: Type) extends Type
 sealed abstract class Value(ty: Type)
 case class StringValue(s: String) extends Value(StringType)
 case class FileValue(path: Path) extends Value(FileType)
-case class URLValue(address: String, updateFreq: Duration) extends Value(URLType)
+case class URLValue(address: URL, updateFreq: Duration) extends Value(URLType)
 
 /** Expression */
 sealed abstract class Expr
@@ -36,11 +36,13 @@ case class ShellAction(shellCommand: Seq[Expr]) extends Action
 // TODO: Builtins, other modules
 
 /** Assignment */
+// TODO: Probably some better way to handle these
 sealed abstract class Assignment
 case class SimpleAssignment(v: Symbol, e: Expr) extends Assignment
 case class ForeachAssignment(v: Symbol, e: Expr) extends Assignment
+case class AddToAssignment(v: Symbol, e: Expr) extends Assignment
 
 /** Statements*/
 sealed abstract class Statement
-case class Declaration(ty: Type, v: Symbol, initialVal: Expr) extends Statement
+case class Declaration(ty: Type, init: SimpleAssignment) extends Statement
 case class Rule(in: List[Assignment], out: List[Assignment], action: Action) extends Statement
